@@ -101,12 +101,7 @@ def resolver_simplex(tabla):
         return str(e)
 
 # Define una matriz de prueba.
-matriz_prueba = [
-    [2, 1, 1, 0, 0, 0, 6],
-    [2, 1, 0, 1, 0, 0, 6],
-    [1, 2, 0, 0, 1, 0, 6],
-    [-4, -3, 0, 0, 0, 1, 0]
-]
+matriz_prueba = [[7, 2, 0, 0, 1], [8, 9, 0, 0, 0], [-2, 5, 0, 0, 0], [5, 7, 0, 0, 0], [0, 0, 0, 0, 1]]
 
 # Punto de entrada del programa.
 if __name__ == '__main__':
