@@ -69,12 +69,34 @@ def TablaSimplexAmpliada(c, T):
     #transpuesta de T1_trans
     T1_trans = [[fila[i] for fila in T_trans] for i in range(len(T_trans[0]))]
     
+    def pivoteo(tabla):
+        num_fil = len(tabla)
+        num_col = len(tabla[0])
+
+        # Buscar el penúltimo elemento en la última fila
+        penultimo_elem = tabla[num_fil - 1][num_col - 2]
+
+        # Buscar la fila que tiene un "1" en la misma columna que el penúltimo elemento
+        pivot_row = -1
+        for i in range(num_fil - 1):
+            if tabla[i][num_col - 2] == 1:
+                pivot_row = i
+                break
+
+        # Realizar la operación F_ultima - F_encontrada
+        if pivot_row != -1:
+            for i in range(num_col):
+                tabla[num_fil - 1][i] -= tabla[pivot_row][i]
+
+        return tabla
+
+    
     # Creación de la tabla simlex estándar canónica
     if num_artificiales == 0:
         a=len(T1_trans[0])-len(c)-1
         for i in range(a):
             c.append(0)
-        c.append("z")
+        c.append(0)
         T1_trans.append(c)
         # Devolver la tabla normal
         print("\nTabla simplex")
@@ -84,7 +106,7 @@ def TablaSimplexAmpliada(c, T):
         a=len(T1_trans[0])-len(c)-1
         for i in range(a):
             c.append(0)
-        c.append("z")
+        c.append(0)
         T1_trans.append(c)
         # Devolver la tabla ampliada y la lista de variables artificiales
         b=len(T1_trans[0])-num_artificiales-1
@@ -93,14 +115,15 @@ def TablaSimplexAmpliada(c, T):
             M.append(0)
         for i in range(num_artificiales):
             M.append(1)
-        M.append("M")
+        M.append(0)
         T1_trans.append(M)
+        print("prueba",T1_trans)
         print("\nTabla simplex ampliada")
-        print(T1_trans)
+        print(pivoteo(T1_trans))
         print("\nVariables artificiales:", ', '.join(variables_artificiales))
         
     
 # Ejemplo 
-c = [5, 7]
-T = [[7, 2, '>=', 5], [8, 9, '<=', 4], [-2, 5, '=', 6]]
+c = [-3,-2]
+T = [[2, 5,'<=', 35], [-3, 2,'>=', -18],[2,4,"<=",26]]
 tabla_ampliada = TablaSimplexAmpliada(c, T)
