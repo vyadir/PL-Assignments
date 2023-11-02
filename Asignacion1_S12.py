@@ -3,7 +3,8 @@
     Descripción: 
 
             Programar en python el algoritmo de simplex. Para esto suponga que recibe una matriz T de tamaño m x n
-            que representa la tabla inicial del simplex ya dada en forma estándar canónica. Deberá conseguir la tabla final de simplex.
+            que representa la tabla inicial del simplex ya dada en forma estándar canónica. Deberá conseguir la 
+            tabla final de simplex.
 
             Una vez logrado, modifica la función para generar otra función que realice
             la primera fase para programas ampliados. En ese caso, se deberá recibir la
@@ -100,15 +101,41 @@ def resolver_simplex(tabla):
     except ValueError as e:  # Captura errores durante la ejecución del algoritmo.
         return str(e)
 
-# Define una matriz de prueba.
-matriz_prueba = [[7, 2, 0, 0, 1], [8, 9, 0, 0, 0], [-2, 5, 0, 0, 0], [5, 7, 0, 0, 0], [0, 0, 0, 0, 1]]
+
 
 # Punto de entrada del programa.
 if __name__ == '__main__':
-    solucion = resolver_simplex(matriz_prueba)  # Resuelve el problema con la matriz de prueba.
+    # Define una matriz con un ejercicio que requiere variables artificiales
+    matriz_prueba = [[1, 1, -1, 0, 0, 5],[2, 3, 0, 1, 0, 12],[0, 1, 0, 0, 1, 3],[-2, -3, 0, 0, 0, 0],[0, 0, 0, 0, -1, -3]]
+    # Define una matriz con un ejercicio que NO requiere variables artificiales
+    matriz_prueba2  = [[2, 1, 1, 0, 18],[2, 3, 0, 1, 42],[-3, -1, 0, 0, 0]]
+    
+    # Ejecuta la primera fase del Simplex.
+    matriz_transformada = fase_inicial(matriz_prueba)
+    
+    print('Para el ejercicio con variables artificiales')
+    # Si la fase inicial fue exitosa y la matriz transformada no es None, ejecuta el algoritmo Simplex.
+    if matriz_transformada:
+        solucion = resolver_simplex(matriz_transformada)
+        
+        # Muestra la solución.
+        if isinstance(solucion, list):
+            for fila in solucion:
+                print(fila)
+        else:
+            print(solucion)  # Muestra el mensaje de error si hubo alguno.
+    else:
+        print("El problema no tiene solución factible.")
+
+    # Para el ejercicio sin variables artificiales
+    print('\n\nPara el ejercicio SIN variables artificiales')
+    solucion2 = resolver_simplex(matriz_prueba2)
     # Muestra la solución.
-    if isinstance(solucion, list):
-        for fila in solucion:
+    if isinstance(solucion2, list):
+        for fila in solucion2:
             print(fila)
     else:
-        print(solucion)  # Muestra el mensaje de error si hubo alguno.
+        print(solucion2)  # Muestra el mensaje de error si hubo alguno.
+
+
+
