@@ -106,14 +106,16 @@ def resolver_simplex(tabla):
 # Punto de entrada del programa.
 if __name__ == '__main__':
     # Define una matriz con un ejercicio que requiere variables artificiales
-    matriz_prueba = [[1, 1, -1, 0, 0, 5],[2, 3, 0, 1, 0, 12],[0, 1, 0, 0, 1, 3],[-2, -3, 0, 0, 0, 0],[0, 0, 0, 0, -1, -3]]
+    matriz_prueba = [[2, 1, 1, 0, 0, 18], [2, 3, 0, 1, 0, 42], [3, -2, 0, 0, 1, 5], [-3, -2, 0, 0, 0, 0]]
+    #[[2, 5, 1, 0, 0, 0, 35], [-3, 2, 0, -1, 0, 1, -18], [2, 4, 0, 0, 1, 0, 26], [-3, -2, 0, 0, 0, 0, 0], [3, -2, 0, 1, 0, 0, 18]]
+    #[[1, 1, -1, 0, 0, 5],[2, 3, 0, 1, 0, 12],[0, 1, 0, 0, 1, 3],[-2, -3, 0, 0, 0, 0],[0, 0, 0, 0, -1, -3]]
     # Define una matriz con un ejercicio que NO requiere variables artificiales
     matriz_prueba2  = [[2, 1, 1, 0, 18],[2, 3, 0, 1, 42],[-3, -1, 0, 0, 0]]
     
     # Ejecuta la primera fase del Simplex.
     matriz_transformada = fase_inicial(matriz_prueba)
     
-    print('Para el ejercicio con variables artificiales')
+    #print('Para el ejercicio con variables artificiales')
     # Si la fase inicial fue exitosa y la matriz transformada no es None, ejecuta el algoritmo Simplex.
     if matriz_transformada:
         solucion = resolver_simplex(matriz_transformada)

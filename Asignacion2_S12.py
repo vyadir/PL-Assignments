@@ -125,5 +125,5 @@ def TablaSimplexAmpliada(c, T):
     
 # Ejemplo 
 c = [-3,-2]
-T = [[2, 5,'<=', 35], [-3, 2,'>=', -18],[2,4,"<=",26]]
+T = [[2, 1,'<=', 18], [2, 3,'<=', 42],[3,-2,"<=",5]]
 tabla_ampliada = TablaSimplexAmpliada(c, T)
