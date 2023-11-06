@@ -101,8 +101,6 @@ def resolver_simplex(tabla):
     except ValueError as e:  # Captura errores durante la ejecución del algoritmo.
         return str(e)
 
-
-
 # Punto de entrada del programa.
 if __name__ == '__main__':
     # Define una matriz con un ejercicio que requiere variables artificiales

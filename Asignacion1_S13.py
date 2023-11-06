@@ -18,9 +18,6 @@
 """
 
 def TablaSimplexAmpliada(c, T):
-    # Variable que guardara valor booleano de si el sistema es ampliado o no.
-    A = False
-    #print(f"Restricción original:\n{T}")
     num_restricciones = len(T)
     num_variables = 0
     num_artificiales = 0
@@ -32,14 +29,12 @@ def TablaSimplexAmpliada(c, T):
         if var_max > num_variables:
             num_variables = var_max # Toma el número más grande de variables
             
-    var_originales=num_variables 
-    #print(var_originales)
+    var_originales=num_variables
 
     # Añadir variables de holgura y superfluas:
     for restriccion in T:
         if '<=' in restriccion or '>=' in restriccion:
             num_variables += 1
-    #print(num_variables)
     
     # Añadir las variables faltantes a las restricciones
     for restriccion in T:
@@ -83,13 +78,11 @@ def TablaSimplexAmpliada(c, T):
     for restriccion in T:
         b.append(restriccion[-1])
     T_trans.append(b)
-        
-    #print(f"\nRestricción con variables artificales:\n{T_trans}")
     
     #transpuesta de T1_trans
     T1_trans = [[fila[i] for fila in T_trans] for i in range(len(T_trans[0]))]
     
-    def pivoteo2(tabla):
+    def pivoteo(tabla):
         num_fil = len(tabla)
         num_col = len(tabla[0])
 
@@ -113,14 +106,13 @@ def TablaSimplexAmpliada(c, T):
     
     # Creación de la tabla simlex estándar canónica
     if num_artificiales == 0:
+        A=False
         a=len(T1_trans[0])-len(c)-1
         for i in range(a):
             c.append(0)
         c.append(0)
         T1_trans.append(c)
-        # Devolver la tabla normal
-        #print("\nTabla simplex")
-        #print(T1_trans)
+        # Devolver la tabla norma
     
     else:
         A=True
@@ -138,12 +130,9 @@ def TablaSimplexAmpliada(c, T):
             M.append(1)
         M.append(0)
         T1_trans.append(M)
-        #print("prueba",T1_trans)
-        #print("\nTabla simplex ampliada")
-        return pivoteo2(T1_trans),A
-        #print("\nVariables artificiales:", ', '.join(variables_artificiales))
-        
-    
+    tablafinal=pivoteo(T1_trans)
+    return tablafinal,A
+
 
 # Función que intercambia dos filas en una matriz.
 def Permutacion(matriz, i, j):
@@ -227,30 +216,18 @@ def resolver_simplex(tabla):
     except ValueError as e:  # Captura errores durante la ejecución del algoritmo.
         return str(e)
     
-
-
 def iniciar_programa(c, T):
-    matriz, esAmpliado = TablaSimplexAmpliada(c,T)
+    matriz,esAmpliado = TablaSimplexAmpliada(c, T)
     print(matriz,esAmpliado)
-    solucion = None
+    
     if esAmpliado:
-        matriz_t = fase_inicial(matriz)
-        if matriz_t:
-            solucion = resolver_simplex(matriz_t)
+        solucion = resolver_simplex(fase_inicial(matriz))
     else:
         solucion = resolver_simplex(matriz)
 
 
-    if isinstance(solucion, list):
-        for fila in solucion:
-            print(fila)
-    else:
-        print(solucion)
-
-
-
-# Punto de entrada del programa.
-if __name__ == '__main__':
-    c = [-2,-5]
-    T = [[1,6,'<=', 20], [1,1,'<=', 60],[1,0,"<=",40]]  
-    iniciar_programa(c, T)
+# Ejemplo 
+c = [-3,-2]
+T = [[2, 5,'<=', 35], [-3, 2,'>=', -18],[2,4,"<=",26]]
+ 
+iniciar_programa(c,T)
