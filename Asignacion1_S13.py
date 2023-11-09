@@ -167,6 +167,7 @@ def TablaSimplexAmpliada(c, T, z0):
 def AlgoritmoSimplex(Matriz, EsAmpliado):
     NFilas, NColumnas = len(Matriz), len(Matriz[0])
     Ejecutar = True
+    columna_pivote = 0
     while(Ejecutar):
         #Si todos los coeficientes de la funcion objetivo son no negativos, se finaliza automaticamente
         if min(Matriz[NFilas-1][0:NColumnas-1])>=0:
@@ -174,7 +175,7 @@ def AlgoritmoSimplex(Matriz, EsAmpliado):
 
         if Ejecutar:
             #Encontrar columna pivote, recorre la funcion objetivo y devuelve el indice del menor elemento
-            columna_pivote = 0
+            
             for i in range(0, NColumnas-1):
                 if (Matriz[NFilas-1][i] < Matriz[NFilas-1][columna_pivote]):
                     columna_pivote = i
