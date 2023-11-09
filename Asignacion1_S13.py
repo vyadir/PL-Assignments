@@ -169,7 +169,6 @@ def AlgoritmoSimplex(Matriz, EsAmpliado):
     Ejecutar = True
     while(Ejecutar):
         #Si todos los coeficientes de la funcion objetivo son no negativos, se finaliza automaticamente
-
         if min(Matriz[NFilas-1][0:NColumnas-1])>=0:
             Ejecutar = False
 
@@ -217,8 +216,6 @@ def AlgoritmoSimplex(Matriz, EsAmpliado):
                 if i != fila_pivote:
                     Valor_k = -Matriz[i][columna_pivote]
                     Matriz = Pivoteo(Matriz, i+1, Valor_k, fila_pivote+1)
-        #print(Matriz)
-        #input()
     return Matriz
 
 def obtenerVector(T):
@@ -244,7 +241,6 @@ def IniciarPrograma(c,T,z0):
     print(Tabla)
     if TieneArtificiales:
         #Cuales son las variables artificiales
-
         VectorArtificiales =[]
         for _ in Artificiales:
             VectorArtificiales.append(int(_))
@@ -284,7 +280,8 @@ def IniciarPrograma(c,T,z0):
         print('Programa lineal sin solucion')
 
 
-
+# Estado 1 sera que el programa reciba un problema lineal y retorne unicamente el resultado, 
+# la solucion optima o el mensaje de fracaso.
 def estado1(c,T,z0):
     Tabla, TieneArtificiales, Artificiales = TablaSimplexAmpliada(c, T,z0)
     puntoOptimo = None
@@ -297,9 +294,28 @@ def estado1(c,T,z0):
     return puntoOptimo, matriz[-1][-1]
 
 
+# Estado 2 sera que el programa reciba un problema lineal, muestre la tabla 
+# simplex inicial y la tabla simplex final junto con la solucion o el mensaje
+# de fracaso. En caso de requerir variables artificiales, deber´a mostrar la tabla simplex intermedia.
+def estado2(c,T,z0):
+    Tabla, TieneArtificiales, Artificiales = TablaSimplexAmpliada(c, T,z0)
+    puntoOptimo = None
+    resultado = None
+    if TieneArtificiales:
+        matriz = AlgoritmoSimplex(Tabla, True)
+        puntoOptimo = obtenerVector(matriz)
+        tablaIntermedia = None
+        resultado = f"\nTabla simplex inicial\n{Tabla}\n\nTabla simplex intermedia\n{tablaIntermedia}\n\nTabla simplex final\n{matriz}\n\nSolución optima\n{puntoOptimo}"
+    else:
+        matriz = AlgoritmoSimplex(Tabla, False)
+        puntoOptimo = obtenerVector(matriz)
+        resultado = f"\nTabla simplex inicial\n{Tabla}\n\nTabla simplex final\n{matriz}\n\nSolución optima\n{puntoOptimo}"
+    return resultado
 
-
-
+# La Estado 3 sera que el programa reciba un problema lineal y muestre todo el
+# procedimiento paso a paso.
+def estado3(c,T,z0):
+    pass
 
 
 def administrador_estados(c,T,z0,estado):
@@ -309,22 +325,25 @@ def administrador_estados(c,T,z0,estado):
         puntoOptimo, resultado = estado1(c,T,z0)
         print(f"\nEl resultado es {resultado} el cual se alcanza en {puntoOptimo}\n")
     elif estado ==2:
-        pass
+        print(estado2(c,T,z0))
     elif estado ==3:
-        pass
+        estado3(c,T,z0)
     else:
         print("El estado ingresado no es válido. Ingrese 1, 2 o 3") 
     pass
 
 
-
-
+"""
+# Ejemplo sin artificiales
 c=[3,0,0,5,0]
 T=[[2,0,1,-1,0,'=',2],[1,1,0,-3,0,'=',1],[-2,0,0,5,1,'=',3]]
 z0=0
+"""
 
-#IniciarPrograma(c, T, z0)
-#Tabla, x, y= TablaSimplexAmpliada(c,T,z0)
 
-administrador_estados(c,T,z0,1)
+# Ejemplo con artificiales
+c=[1,-2,5]
+T=[[2,3,5,'<=',5],[3,-2,4,'<=',6],[1,-3,2,'>=',4]]
+z0=1
 
+administrador_estados(c,T,z0,2)
