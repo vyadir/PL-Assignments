@@ -17,7 +17,31 @@
 
 """
 
-def TablaSimplexAmpliada(c, T):
+#Operaciones sobre las filas de una matriz
+def Escalamiento(matriz, k, i):
+    # Verifica que la fila dada exista y que el factor no sea 0.
+    if i <= len(matriz) and k != 0:
+        for j in range(len(matriz[i-1])):
+            matriz[i-1][j] *= k  # Multiplica cada elemento de la fila por k.
+    else:
+        print('La entrada de la fila es invalida')  # Mensaje de error.
+    return matriz
+
+
+def Pivoteo(matriz, i, k, j):
+    # Verifica que las filas dadas existan y que el factor no sea 0.
+    if (i and j) <= len(matriz) and k != 0:
+        n = len(matriz[i-1])  # Longitud de la fila i.
+        # Verifica que ambas filas tengan la misma longitud.
+        if n == len(matriz[j-1]):
+            for elemento_n in range(n):
+                matriz[i-1][elemento_n] += k * matriz[j-1][elemento_n]  # Suma k veces la fila j a la fila i.
+    return matriz
+
+#Matriz Aumentada
+
+def TablaSimplexAmpliada(c, T, z0):
+    
     num_restricciones = len(T)
     num_variables = 0
     num_artificiales = 0
@@ -29,12 +53,14 @@ def TablaSimplexAmpliada(c, T):
         if var_max > num_variables:
             num_variables = var_max # Toma el número más grande de variables
             
-    var_originales=num_variables
+    var_originales=num_variables 
+    #print(var_originales)
 
     # Añadir variables de holgura y superfluas:
     for restriccion in T:
         if '<=' in restriccion or '>=' in restriccion:
             num_variables += 1
+    #print(num_variables)
     
     # Añadir las variables faltantes a las restricciones
     for restriccion in T:
@@ -71,7 +97,7 @@ def TablaSimplexAmpliada(c, T):
         if vector not in T_trans:
             T_trans.append(vector)
             num_artificiales += 1   
-            variables_artificiales.append(f'x{num_variables + num_artificiales}')  # Agregar la variable artificial a la lista
+            variables_artificiales.append(f'{num_variables + num_artificiales}')  # Agregar la variable artificial a la lista
     
     # Añadir el vector b a T_trans:
     b = []
@@ -103,24 +129,23 @@ def TablaSimplexAmpliada(c, T):
 
         return tabla
 
-    
     # Creación de la tabla simlex estándar canónica
     if num_artificiales == 0:
-        A=False
         a=len(T1_trans[0])-len(c)-1
         for i in range(a):
             c.append(0)
         c.append(0)
         T1_trans.append(c)
-        # Devolver la tabla norma
-    
+        T1_trans[-1][-1]=-z0
+        # Devolver la tabla normal
+        isAmpliada = False
     else:
-        A=True
         a=len(T1_trans[0])-len(c)-1
         for i in range(a):
             c.append(0)
         c.append(0)
         T1_trans.append(c)
+        T1_trans[-1][-1]=-z0
         # Devolver la tabla ampliada y la lista de variables artificiales
         b=len(T1_trans[0])-num_artificiales-1
         M=[]
@@ -130,104 +155,151 @@ def TablaSimplexAmpliada(c, T):
             M.append(1)
         M.append(0)
         T1_trans.append(M)
-    tablafinal=pivoteo(T1_trans)
-    return tablafinal,A
-
-
-# Función que intercambia dos filas en una matriz.
-def Permutacion(matriz, i, j):
-    # Verifica si las filas dadas están dentro del rango de la matriz.
-    if (i and j) <= len(matriz):
-        auxiliar = matriz[i - 1]  # Guarda temporalmente la fila i.
-        matriz[i - 1] = matriz[j - 1]  # Sustituye la fila i por la fila j.
-        matriz[j - 1] = auxiliar  # Sustituye la fila j con la fila i original (guardada en auxiliar).
-    return matriz
-
-# Función que multiplica una fila de la matriz por un factor k.
-def Escalamiento(matriz, k, i):
-    # Verifica que la fila dada exista y que el factor no sea 0.
-    if i <= len(matriz) and k != 0:
-        for j in range(len(matriz[i-1])):
-            matriz[i-1][j] *= k  # Multiplica cada elemento de la fila por k.
-    else:
-        print('La entrada de la fila es invalida')  # Mensaje de error.
-    return matriz
-
-# Función que suma un múltiplo k de la fila j a la fila i.
-def Pivoteo(matriz, i, k, j):
-    # Verifica que las filas dadas existan y que el factor no sea 0.
-    if (i and j) <= len(matriz) and k != 0:
-        n = len(matriz[i-1])  # Longitud de la fila i.
-        # Verifica que ambas filas tengan la misma longitud.
-        if n == len(matriz[j-1]):
-            for elemento_n in range(n):
-                matriz[i-1][elemento_n] += k * matriz[j-1][elemento_n]  # Suma k veces la fila j a la fila i.
-    return matriz
-
-# Función que implementa el algoritmo de simplex.
-def algoritmo_simplex(T):
-    m, n = len(T), len(T[0])  # Dimensiones de la matriz.
-    # Mientras haya valores negativos en la fila de la función objetivo.
-    while any(x < 0 for x in T[-1][:-1]):
-        columna_pivote = T[-1].index(min(T[-1][:-1]))  # Encuentra la columna con el valor más negativo.
-        # Si todos los valores de la columna pivote son no positivos, el problema no tiene solución finita.
-        if all(x <= 0 for x in [fila[columna_pivote] for fila in T[:-1]]):
-            raise ValueError("El problema no tiene solución óptima finita.")
-        # Calcula las proporciones para determinar la fila pivote.
-        proporciones = [fila[-1] / fila[columna_pivote] if fila[columna_pivote] > 0 else float('inf') for fila in T[:-1]]
-        fila_pivote = proporciones.index(min(proporciones))
-        # Normaliza la fila pivote.
-        valor_pivote = T[fila_pivote][columna_pivote]
-        T[fila_pivote] = [x / valor_pivote for x in T[fila_pivote]]
-        # Hace cero los demás valores de la columna pivote.
-        for i in range(m):
-            if i != fila_pivote:
-                factor = T[i][columna_pivote]
-                T[i] = [x - factor * y for x, y in zip(T[i], T[fila_pivote])]
-    return T
-
-# Función que maneja la primera fase del simplex para tratar con variables artificiales.
-def fase_inicial(tabla):
-    m, n = len(tabla), len(tabla[0])  # Dimensiones de la matriz.
-    numero_vars_artificiales = m - 1  # Número de variables artificiales necesarias.
-    # Crea una fila de penalización.
-    fila_penalizacion = [-1 if i < n - 1 - numero_vars_artificiales else 0 for i in range(n)]
-    tabla.insert(m - 1, fila_penalizacion)
-    # Resuelve el problema de optimización con la función de penalización.
-    try:
-        tabla = algoritmo_simplex(tabla)
-    except Exception as e:
-        raise ValueError(f"Error durante la primera fase del Simplex: {e}")
-    # Si el valor en la fila de penalización no es 0, el problema original no tiene solución factible.
-    if tabla[-2][-1] != 0:
-        return None
-    # Elimina la fila de penalización y las variables artificiales.
-    tabla.pop(-2)
-    for i in range(m - 1):
-        del tabla[i][-2-numero_vars_artificiales:-2]
-    del tabla[-1][-2-numero_vars_artificiales:-2]
-    return tabla
-
-# Función principal que resuelve el problema de optimización.
-def resolver_simplex(tabla):
-    try:
-        resultado = algoritmo_simplex(tabla)  # Resuelve el problema usando el algoritmo de simplex.
-        return resultado
-    except ValueError as e:  # Captura errores durante la ejecución del algoritmo.
-        return str(e)
+        #Importante no borrar
+        pivoteo(T1_trans)
+        print("\nVariables artificiales:", ', '.join(variables_artificiales))
+        isAmpliada = True
     
-def iniciar_programa(c, T):
-    matriz,esAmpliado = TablaSimplexAmpliada(c, T)
-    print(matriz,esAmpliado)
+    return T1_trans, isAmpliada, variables_artificiales
+
+#Simplex (Taylor's Version), asumamos que el programa se encuentra de antemano en su forma canonica.
+
+def AlgoritmoSimplex(Matriz, EsAmpliado):
+    NFilas, NColumnas = len(Matriz), len(Matriz[0])
     
-    if esAmpliado:
-        solucion = resolver_simplex(fase_inicial(matriz))
+    Ejecutar = True
+
+
+    while(Ejecutar):
+        #Si todos los coeficientes de la funcion objetivo son no negativos, se finaliza automaticamente
+
+        if min(Matriz[NFilas-1][0:NColumnas-1])>=0:
+            Ejecutar = False
+
+        if Ejecutar:
+            #Encontrar columna pivote, recorre la funcion objetivo y devuelve el indice del menor elemento
+            columna_pivote = 0
+            for i in range(0, NColumnas-1):
+                if (Matriz[NFilas-1][i] < Matriz[NFilas-1][columna_pivote]):
+                    columna_pivote = i
+            fila_pivote = -1
+            #Encontrar Pivote
+
+            #Recordar que la ultima fila puede variar si es ampliado o no
+            if EsAmpliado:
+                CantidadFilasSimplex=NFilas-2
+            else:
+                CantidadFilasSimplex = NFilas - 1
+            for i in range(CantidadFilasSimplex):
+                if Matriz[i][columna_pivote]>0:
+                    cociente = Matriz[i][NColumnas-1]/Matriz[i][columna_pivote]
+            if cociente > 0:
+                for i in range(0, CantidadFilasSimplex):
+                    if Matriz[i][columna_pivote]>0:
+                        cocienteFila = Matriz[i][NColumnas-1]/Matriz[i][columna_pivote]
+                        if cocienteFila > 0 and cocienteFila <= cociente:
+                            fila_pivote = i
+                            cociente = cocienteFila
+            if fila_pivote == -1:
+                print('El programa no tiene solucion optima')
+                Ejecutar = False
+                Matriz = []
+
+
+            if fila_pivote == -1:
+                print('El programa no tiene solucion optima')
+                Ejecutar = False
+                Matriz = []
+                
+                
+        if Ejecutar:
+            #Proceso de pivote
+            ElementoPivote = Matriz[fila_pivote][columna_pivote]
+
+            #Primer paso pivote 
+
+            Matriz = Escalamiento(Matriz, 1/ElementoPivote, fila_pivote+1)
+            #Segundo paso pivoteo
+
+            for i in range(0, NFilas):
+                if i != fila_pivote:
+                    Valor_k = -Matriz[i][columna_pivote]
+                    Matriz = Pivoteo(Matriz, i+1, Valor_k, fila_pivote+1)
+        print(Matriz)
+        input()
+    return Matriz
+
+def obtenerVector(T):
+
+    NFilas, NColumnas = len(T), len(T[0])
+    VectorSolucion = [0]*(NColumnas-1)
+    for i in range(NFilas-1):
+        for j in range(NColumnas-1):
+            if T[i][j] == 1 and T[NFilas-1][j]==0:
+                VectorSolucion[j] = T[i][NColumnas-1]
+    return VectorSolucion
+#Terminar S13
+
+#Pruebas
+
+#T = [[2,5,2,0,1,0,3], [1,2,4,0,0,1,6], [3,-2,1,1,0,0,4],[2,-3,1,0,0,0,-9/5]]
+#T=[[4,2,1,0,32],[2,3,0,1,24],[-5,-4,0,0,0]]
+
+#Pruebas
+
+def IniciarPrograma(c,T,z0):
+    Tabla, TieneArtificiales, Artificiales = TablaSimplexAmpliada(c, T,z0)
+
+    print(Tabla)
+    if TieneArtificiales:
+        #Cuales son las variables artificiales
+
+        VectorArtificiales =[]
+        for _ in Artificiales:
+            VectorArtificiales.append(int(_))
+        VectorArtificiales.sort(reverse=True)
+        #Simplex para sistemas aumentados
+        AlgoritmoSimplex(Tabla, True)
+        if Tabla:
+            #Commpara que cada 
+            SolucionProgramaAmplicado = obtenerVector(Tabla)
+            Validacion = True
+            for IndiceArtificial in VectorArtificiales:
+                if SolucionProgramaAmplicado[(IndiceArtificial)-1] != 0:
+                    Validacion = False
+            if Validacion:
+                print('Programa ampliado converge y la penalización es nula')
+                print(Tabla)
+                #Proceso de poda, corregir
+                print('Inicio proceso de poda')
+                del(Tabla[-1])
+                
+                for i in range(len(Tabla)):
+                    for IndiceArtificial in VectorArtificiales:
+                        del(Tabla[i][IndiceArtificial-1])
+                print(Tabla)
+            else:
+                print('Programa lineal ampliado no paga los pesos')
+                Tabla = []
+        else:
+            print('Programa sin solucion')
+    #Simplex
+    Tabla = AlgoritmoSimplex(Tabla,False)
+    if Tabla:
+        print('Solucion del programa lineal ')
+        print(Tabla)
+        print(obtenerVector(Tabla))
     else:
-        solucion = resolver_simplex(matriz)
+        print('Programa lineal sin solucion')
 
 
-# Ejemplo 
-c = [-3,-2]
-T = [[2, 5,'<=', 35], [-3, 2,'>=', -18],[2,4,"<=",26]]
- 
-iniciar_programa(c,T)
+
+
+
+c=[-8,3-6]
+T=[[1,-3,5,'=',4],[5,3,-4,'>=',6]]
+z0=0
+IniciarPrograma(c, T, z0)
+
+#Tabla, x, y= TablaSimplexAmpliada(c,T,z0)
+
