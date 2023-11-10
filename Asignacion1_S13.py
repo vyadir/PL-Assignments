@@ -238,9 +238,10 @@ def AlgoritmoSimplexPasoAPaso(Matriz, EsAmpliado):
                     columna_pivote = i
 
             print(f"Columna pivote seleccionada: {columna_pivote}")
-
+            
             # Encontrar fila pivote
             fila_pivote = -1
+            
             if EsAmpliado:
                 CantidadFilasSimplex = NFilas - 2
             else:
@@ -253,13 +254,16 @@ def AlgoritmoSimplexPasoAPaso(Matriz, EsAmpliado):
                     if 0 < cociente < menor_cociente:
                         menor_cociente = cociente
                         fila_pivote = i
-                        
+            
             #print(fila_pivote)
             if fila_pivote == -1 :
                 print("El programa no tiene solución óptima.")
                 break
-
+            
+            # PULGA QUE ARREGLAR
             print(f"Fila pivote seleccionada: {fila_pivote}")
+            print(f"Cociente: {cociente}")
+
             # Proceso de pivote
             ElementoPivote = Matriz[fila_pivote][columna_pivote]
             Matriz = Escalamiento(Matriz, 1 / ElementoPivote, fila_pivote)
@@ -359,7 +363,7 @@ def IniciarProgramaEstado2(c,T,z0):
         #Simplex para sistemas aumentados
         AlgoritmoSimplex(Tabla, True)
         #print(Tabla)
-        #lista.append(copy.deepcopy(Tabla))
+        lista.append(copy.deepcopy(Tabla))
         if Tabla:
             #Commpara que cada 
             SolucionProgramaAmplicado = obtenerVector(Tabla)
@@ -377,7 +381,7 @@ def IniciarProgramaEstado2(c,T,z0):
                     for IndiceArtificial in VectorArtificiales:
                         del(Tabla[i][IndiceArtificial-1])
                 #print(Tabla)
-                #lista.append(copy.deepcopy(Tabla))
+                lista.append(copy.deepcopy(Tabla))
             else:
                 #print('Programa lineal ampliado no paga los pesos')
                 Tabla = []
@@ -454,7 +458,7 @@ def administrador_estados(c,T,z0,estado):
     elif estado == 2:
         lista=IniciarProgramaEstado2(c,T,z0)
         TieneArtificiales = lista[0]
-        lista = IniciarProgramaEstado2(c,T,z0)
+        print(lista)
         if TieneArtificiales:
             print(f"La tabla inicial simplex es\n {lista[1]}\n\nLa tabla simplex previo a la convergencia de las variables artificiales es\n {lista[2]}\n\nLa tabla simplex luego de la poda de variables artificiales es\n {lista[3]}\n\nLa tabla final simplex es \n{lista[4]}\n\nLa solución óptima es\n{lista[5]}")
         else:
@@ -465,18 +469,18 @@ def administrador_estados(c,T,z0,estado):
         print("El estado ingresado no es válido. Ingrese 1, 2 o 3") 
  
 # Ejemplo sin artificiales
-c=[2,-3]
+"""c=[2,-3]
 T=[[-1,2,1,0,0,'=',8],[1,1,0,1,0,'=',10],[3,-2,0,0,1,'=',15]]
 z0=0
-
 """
+
 # Ejemplo con artificiales
 c=[3,-2]
 T=[[2,1,'>=',4],[-1,1,'<=',4],[3,-1,'<=',15],[1,0,'<=',7]]
 z0=-3
-"""
 
-administrador_estados(c,T,z0,3)
+
+administrador_estados(c,T,z0,2)
 
 
 """
