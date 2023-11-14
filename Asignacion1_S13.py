@@ -158,7 +158,6 @@ def TablaSimplexAmpliada(c, T, z0):
         T1_trans.append(M)
         #Importante no borrar
         pivoteo(T1_trans)
-        print("\nVariables artificiales:", ', '.join(variables_artificiales))
         isAmpliada = True
     
     return T1_trans, isAmpliada, variables_artificiales
@@ -178,7 +177,6 @@ def AlgoritmoSimplex(Matriz, EsAmpliado):
             for i in range(0, NColumnas-1):
                 if (Matriz[NFilas-1][i] < Matriz[NFilas-1][columna_pivote]):
                     columna_pivote = i
-            fila_pivote = -1
             #Encontrar Pivote
 
             #Recordar que la ultima fila puede variar si es ampliado o no
@@ -186,7 +184,20 @@ def AlgoritmoSimplex(Matriz, EsAmpliado):
                 CantidadFilasSimplex=NFilas-2
             else:
                 CantidadFilasSimplex = NFilas - 1
+            
+            VectorCocientes = [-float('inf')]*CantidadFilasSimplex
             for i in range(CantidadFilasSimplex):
+                if Matriz[i][columna_pivote]!=0:
+                    VectorCocientes[i] = Matriz[i][NColumnas-1]/Matriz[i][columna_pivote]
+            Cocientes_Postivos = [numero for numero in VectorCocientes if numero > 0]
+            if Cocientes_Postivos:
+                # Encontrar el índice del menor número positivo
+                fila_pivote = VectorCocientes.index(min(Cocientes_Postivos))
+            else:
+                Ejecutar = False
+                T = []
+            
+            """for i in range(CantidadFilasSimplex):
                 if Matriz[i][columna_pivote]>0:
                     cociente = Matriz[i][NColumnas-1]/Matriz[i][columna_pivote]
             if cociente > 0:
@@ -200,7 +211,7 @@ def AlgoritmoSimplex(Matriz, EsAmpliado):
                 print('El programa no tiene solucion optima')
                 Ejecutar = False
                 Matriz = []
-                
+            """
         if Ejecutar:
             #Proceso de pivote
             ElementoPivote = Matriz[fila_pivote][columna_pivote]
@@ -216,67 +227,92 @@ def AlgoritmoSimplex(Matriz, EsAmpliado):
 def AlgoritmoSimplexPasoAPaso(Matriz, EsAmpliado):
     NFilas, NColumnas = len(Matriz), len(Matriz[0])
     Ejecutar = True
+
+    #Primera iteracion 
+    print('Primera iteracion ')
     Matrices = []
-    iteracion = 0
+    Matrices.append(copy.deepcopy(Matriz))
+    print(Matrices)
+    input()
 
-    while Ejecutar:
-        print(f"Iteración {iteracion}: Matriz actual:")
-        for fila in Matriz:
-            print(fila)
-
-        # Si todos los coeficientes de la funcion objetivo son no negativos, se finaliza automáticamente
-        if min(Matriz[NFilas - 1][0:NColumnas - 1]) >= 0:
+    
+    while(Ejecutar):
+        #Si todos los coeficientes de la funcion objetivo son no negativos, se finaliza automaticamente
+        if min(Matriz[NFilas-1][0:NColumnas-1])>=0:
+            print('Se encontró que todos los coeficientes de la función objetivo son no negativos, fin del programa')
+            input()
             Ejecutar = False
-            print("Todos los coeficientes de la función objetivo son no negativos. El procedimiento ha terminado.")
-            break
-        
-        if Ejecutar:
-            # Encontrar columna pivote
-            columna_pivote = 0
-            for i in range(NColumnas - 1):
-                if Matriz[NFilas - 1][i] < Matriz[NFilas - 1][columna_pivote]:
-                    columna_pivote = i
 
-            print(f"Columna pivote seleccionada: {columna_pivote}")
-            
-            # Encontrar fila pivote
-            fila_pivote = -1
-            
+        if Ejecutar:
+            #Encontrar columna pivote, recorre la funcion objetivo y devuelve el indice del menor elemento
+            columna_pivote = 0
+            for i in range(0, NColumnas-1):
+                if (Matriz[NFilas-1][i] < Matriz[NFilas-1][columna_pivote]):
+                    columna_pivote = i
+            print('Columna pivote:', columna_pivote+1, ' dado que ', Matriz[NFilas-1][columna_pivote], ' es el menor coeficiente negativo de la función objetivo')
+            #Encontrar Pivote
+
+            #Recordar que la ultima fila puede variar si es ampliado o no
             if EsAmpliado:
-                CantidadFilasSimplex = NFilas - 2
+                CantidadFilasSimplex=NFilas-2
             else:
                 CantidadFilasSimplex = NFilas - 1
-
-            menor_cociente = float('inf')
+            
+            VectorCocientes = [-float('inf')]*CantidadFilasSimplex
             for i in range(CantidadFilasSimplex):
-                if Matriz[i][columna_pivote] > 0:
-                    cociente = Matriz[i][NColumnas - 1] / Matriz[i][columna_pivote]
-                    if 0 < cociente < menor_cociente:
-                        menor_cociente = cociente
-                        fila_pivote = i
+                if Matriz[i][columna_pivote]!=0:
+                    VectorCocientes[i] = Matriz[i][NColumnas-1]/Matriz[i][columna_pivote]
+            Cocientes_Postivos = [numero for numero in VectorCocientes if numero >= 0]
+            if Cocientes_Postivos:
+                # Encontrar el índice del menor número positivo
+                fila_pivote = VectorCocientes.index(min(Cocientes_Postivos))
+                print('Fila pivote:', fila_pivote+1, ' dado que ', Matriz[fila_pivote][NColumnas-1], '/', Matriz[fila_pivote][columna_pivote] ,' es el menor cociente no negativo')
+                print('De esta manera el elemento pivote ')
+                input()
+            else:
+                Ejecutar = False
+                T = []
             
-            #print(fila_pivote)
-            if fila_pivote == -1 :
-                print("El programa no tiene solución óptima.")
-                break
+            """for i in range(CantidadFilasSimplex):
+                if Matriz[i][columna_pivote]>0:
+                    cociente = Matriz[i][NColumnas-1]/Matriz[i][columna_pivote]
+            if cociente > 0:
+                for i in range(0, CantidadFilasSimplex):
+                    if Matriz[i][columna_pivote]>0:
+                        cocienteFila = Matriz[i][NColumnas-1]/Matriz[i][columna_pivote]
+                        if cocienteFila > 0 and cocienteFila <= cociente:
+                            fila_pivote = i
+                            cociente = cocienteFila
+            if fila_pivote == -1:
+                print('El programa no tiene solucion optima')
+                Ejecutar = False
+                Matriz = []
+            """
+        if Ejecutar:
+            print('Proceso de pivoteo:')
+            input()
+            #Proceso de pivote
+            print('Elemento pivote se encuentra en la posición', fila_pivote+1, ',', columna_pivote+1)
             
-            # PULGA QUE ARREGLAR
-            print(f"Fila pivote seleccionada: {fila_pivote}")
-            print(f"Cociente: {cociente}")
-
-            # Proceso de pivote
             ElementoPivote = Matriz[fila_pivote][columna_pivote]
-            Matriz = Escalamiento(Matriz, 1 / ElementoPivote, fila_pivote)
-            for i in range(NFilas):
+
+            print('Elemento pivote corresponde a', ElementoPivote)
+            input()
+            #Primer paso pivote 
+            Matriz = Escalamiento(Matriz, 1/ElementoPivote, fila_pivote+1)
+            print('Se multiplica fila ', fila_pivote+1, ' por ', 1/ElementoPivote)
+            input()
+            #Segundo paso pivoteo
+            for i in range(0, NFilas):
                 if i != fila_pivote:
                     Valor_k = -Matriz[i][columna_pivote]
-                    Matriz = Pivoteo(Matriz, i, Valor_k, fila_pivote)
+                    print('A la fila ', i+1, ' se le suma ', Valor_k, ' veces la fila ', fila_pivote+1)
+                    print('El resultado del proceso es: ')
+                    Matriz = Pivoteo(Matriz, i+1, Valor_k, fila_pivote+1)
+                    print(Matriz)
+                    input()
             Matrices.append(copy.deepcopy(Matriz))
-            iteracion += 1
     return Matriz
-
-# Asegúrate de tener implementadas las funciones Escalamiento y Pivoteo.
-
 
 def obtenerVector(T):
     NFilas, NColumnas = len(T), len(T[0])
@@ -308,6 +344,7 @@ def IniciarProgramaEstado1(c,T,z0):
         VectorArtificiales.sort(reverse=True)
         #Simplex para sistemas aumentados
         AlgoritmoSimplex(Tabla, True)
+        print(Tabla)
         if Tabla:
             #Commpara que cada 
             SolucionProgramaAmplicado = obtenerVector(Tabla)
@@ -480,7 +517,7 @@ T=[[2,1,'>=',4],[-1,1,'<=',4],[3,-1,'<=',15],[1,0,'<=',7]]
 z0=-3
 
 
-administrador_estados(c,T,z0,2)
+administrador_estados(c,T,z0,3)
 
 
 """
