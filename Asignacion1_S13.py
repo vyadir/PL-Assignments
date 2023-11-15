@@ -197,21 +197,6 @@ def AlgoritmoSimplex(Matriz, EsAmpliado):
                 Ejecutar = False
                 T = []
             
-            """for i in range(CantidadFilasSimplex):
-                if Matriz[i][columna_pivote]>0:
-                    cociente = Matriz[i][NColumnas-1]/Matriz[i][columna_pivote]
-            if cociente > 0:
-                for i in range(0, CantidadFilasSimplex):
-                    if Matriz[i][columna_pivote]>0:
-                        cocienteFila = Matriz[i][NColumnas-1]/Matriz[i][columna_pivote]
-                        if cocienteFila > 0 and cocienteFila <= cociente:
-                            fila_pivote = i
-                            cociente = cocienteFila
-            if fila_pivote == -1:
-                print('El programa no tiene solucion optima')
-                Ejecutar = False
-                Matriz = []
-            """
         if Ejecutar:
             #Proceso de pivote
             ElementoPivote = Matriz[fila_pivote][columna_pivote]
