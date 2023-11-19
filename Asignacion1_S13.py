@@ -195,8 +195,7 @@ def AlgoritmoSimplex(Matriz, EsAmpliado):
                 fila_pivote = VectorCocientes.index(min(Cocientes_Postivos))
             else:
                 Ejecutar = False
-                T = []
-            
+                T = []   
         if Ejecutar:
             #Proceso de pivote
             ElementoPivote = Matriz[fila_pivote][columna_pivote]
