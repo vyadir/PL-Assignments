@@ -1,6 +1,9 @@
 import copy
 import math
 
+"""
+    Ahora, se utiliza todo el código anterior para implementar la parte de programación entera.
+"""
 #Operaciones sobre las filas de una matriz
 def Escalamiento(matriz, k, i):
     # Verifica que la fila dada exista y que el factor no sea 0.
