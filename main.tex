@@ -1,0 +1,165 @@
+\documentclass{article} % Tipo de documento: artículo
+\usepackage[utf8]{inputenc} % Codificación de entrada
+\usepackage[T1]{fontenc} % Codificación de fuente
+\usepackage[spanish]{babel} % Configuración del idioma
+\usepackage{amsmath,amsfonts,amssymb} % Paquetes matemáticos
+\usepackage{graphicx} % Para incluir gráficos
+\usepackage{caption} % Para personalizar los pies de figura
+\usepackage{hyperref} % Para enlaces web
+\usepackage[left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm]{geometry}
+\title{Fórmulas métodos}
+\author{jmsandoval2801 }
+\date{November 2023}
+
+\begin{document}
+
+Resolución del siguiente programa lineal:
+\begin{center}
+Minimizar $z=135x_1+180x_2+452x_3+235x_4$ \\ 
+Sujeto a las restricciones:
+\end{center}
+$$\left\{ 
+ \begin{array}{rcl}
+x_1+x_2+7x_3+7x_4 & \geq & 4\\ 
+2x_1+7x_2+3x_3-7x_4 & \geq & 6\\ 
+3x_1+7x_2-6x_3+x_4 & \geq & 5\\ 
+6x_1+7x_2+2x_3-3x_4 & \geq & 7\\ 
+\end{array} 
+\right.$$
+La restricción 1 es de $\geq$, se añade la variable superflua $x_5$. La restricción 2 es de $\geq$, se añade la variable superflua $x_6$. La restricción 3 es de $\geq$, se añade la variable superflua $x_7$. La restricción 4 es de $\geq$, se añade la variable superflua $x_8$. 
+Al añadir las variables de holgura y superfluas a la restricción se obtiene:
+$$\left\{ 
+ \begin{array}{rcl}
+x_1+x_2+7x_3+7x_4-x_5+0x_6+0x_7+0x_8 & = & 4\\ 
+2x_1+7x_2+3x_3-7x_4+0x_5-x_6+0x_7+0x_8 & = & 6\\ 
+3x_1+7x_2-6x_3+x_4+0x_5+0x_6-x_7+0x_8 & = & 5\\ 
+6x_1+7x_2+2x_3-3x_4+0x_5+0x_6+0x_7-x_8 & = & 7\\ 
+\end{array} 
+\right.$$
+Note que todavía no se tienen todas las columnas del vector identidad, se deben añadir variables artificiales \\ 
+Al añadir las variables artificiales se crea la siguiente tabla simplex apliada:
+\begin{center} 
+\begin{tabular}{|cccccccccccc|c|}\hline
+1 & 1 & 7 & 7 & -1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 4  \\
+2 & 7 & 3 & -7 & 0 & -1 & 0 & 0 & 0 & 1 & 0 & 0 & 6  \\
+3 & 7 & -6 & 1 & 0 & 0 & -1 & 0 & 0 & 0 & 1 & 0 & 5  \\
+6 & 7 & 2 & -3 & 0 & 0 & 0 & -1 & 0 & 0 & 0 & 1 & 7  \\
+\hline
+135 & 180 & 452 & 235 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0  \\
+-6 & -7 & -2 & 3 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 0 & -7  \\
+\hline
+\end{tabular}
+\end{center}
+Se comienza a resolver usando el método simplex. \\ 
+\textbf{Proceso de pivoteo}
+\begin{itemize}
+\item La columna pivote es 2 dado que -7  es el menor coeficiente negativo de la función objetivo.
+\item La fila pivote es 3 dado que 5/7 es el menor cociente no negativo.
+\item Ahora se aplica el proceso de pivoteo con el elemento pivote en la posición [3, 2].
+\item El elemento pivote corresponde a 7
+\end{itemize}
+Se multiplica la fila  3 por 0.14285714285714285  y se convierte en 0 los demás valores de la columna pivote en 0: 
+\begin{center}
+\begin{tabular}{|cccccccccccc|c|}\hline
+0.5714285714285714 & 0.0 & 7.857142857142857 & 6.857142857142857 & -1.0 & 0.0 & 0.14285714285714285 & 0.0 & 1.0 & 0.0 & -0.14285714285714285 & 0.0 & 3.2857142857142856  \\
+-1.0 & 0.0 & 9.0 & -8.0 & 0.0 & -1.0 & 1.0 & 0.0 & 0.0 & 1.0 & -1.0 & 0.0 & 1.0000000000000009  \\
+0.42857142857142855 & 1.0 & -0.8571428571428571 & 0.14285714285714285 & 0.0 & 0.0 & -0.14285714285714285 & 0.0 & 0.0 & 0.0 & 0.14285714285714285 & 0.0 & 0.7142857142857142  \\
+3.0 & 0.0 & 8.0 & -4.0 & 0.0 & 0.0 & 1.0 & -1.0 & 0.0 & 0.0 & -1.0 & 1.0 & 2.000000000000001  \\
+\hline
+57.85714285714286 & 0.0 & 606.2857142857142 & 209.28571428571428 & 0.0 & 0.0 & 25.71428571428571 & 0.0 & 0.0 & 0.0 & -25.71428571428571 & 0.0 & -128.57142857142856  \\
+-3.0 & 0.0 & -8.0 & 4.0 & 0.0 & 0.0 & -1.0 & 1.0 & 1.0 & 1.0 & 2.0 & 0.0 & -2.000000000000001  \\
+\hline
+\end{tabular}
+\end{center}
+\textbf{Proceso de pivoteo}
+\begin{itemize}
+\item La columna pivote es 3 dado que -8.0  es el menor coeficiente negativo de la función objetivo.
+\item La fila pivote es 2 dado que 1.0000000000000009/9.0 es el menor cociente no negativo.
+\item Ahora se aplica el proceso de pivoteo con el elemento pivote en la posición [2, 3].
+\item El elemento pivote corresponde a 9.0
+\end{itemize}
+Se multiplica la fila  2 por 0.1111111111111111  y se convierte en 0 los demás valores de la columna pivote en 0: 
+\begin{center}
+\begin{tabular}{|cccccccccccc|c|}\hline
+1.4444444444444442 & 0.0 & 0.0 & 13.84126984126984 & -1.0 & 0.8730158730158729 & -0.73015873015873 & 0.0 & 1.0 & -0.8730158730158729 & 0.73015873015873 & 0.0 & 2.412698412698412  \\
+-0.1111111111111111 & 0.0 & 1.0 & -0.8888888888888888 & 0.0 & -0.1111111111111111 & 0.1111111111111111 & 0.0 & 0.0 & 0.1111111111111111 & -0.1111111111111111 & 0.0 & 0.1111111111111112  \\
+0.3333333333333333 & 1.0 & 0.0 & -0.6190476190476191 & 0.0 & -0.09523809523809523 & -0.047619047619047616 & 0.0 & 0.0 & 0.09523809523809523 & 0.047619047619047616 & 0.0 & 0.8095238095238095  \\
+3.888888888888889 & 0.0 & 0.0 & 3.1111111111111107 & 0.0 & 0.8888888888888888 & 0.11111111111111116 & -1.0 & 0.0 & -0.8888888888888888 & -0.11111111111111116 & 1.0 & 1.1111111111111112  \\
+\hline
+125.22222222222221 & 0.0 & 0.0 & 748.2063492063492 & 0.0 & 67.36507936507935 & -41.650793650793645 & 0.0 & 0.0 & -67.36507936507935 & 41.650793650793645 & 0.0 & -195.93650793650795  \\
+-3.888888888888889 & 0.0 & 0.0 & -3.1111111111111107 & 0.0 & -0.8888888888888888 & -0.11111111111111116 & 1.0 & 1.0 & 1.8888888888888888 & 1.1111111111111112 & 0.0 & -1.1111111111111112  \\
+\hline
+\end{tabular}
+\end{center}
+\textbf{Proceso de pivoteo}
+\begin{itemize}
+\item La columna pivote es 1 dado que -3.888888888888889  es el menor coeficiente negativo de la función objetivo.
+\item La fila pivote es 4 dado que 1.1111111111111112/3.888888888888889 es el menor cociente no negativo.
+\item Ahora se aplica el proceso de pivoteo con el elemento pivote en la posición [4, 1].
+\item El elemento pivote corresponde a 3.888888888888889
+\end{itemize}
+Se multiplica la fila  4 por 0.2571428571428572  y se convierte en 0 los demás valores de la columna pivote en 0: 
+\begin{center}
+\begin{tabular}{|cccccccccccc|c|}\hline
+0.0 & 0.0 & 0.0 & 12.685714285714285 & -1.0 & 0.5428571428571427 & -0.7714285714285714 & 0.3714285714285714 & 1.0 & -0.5428571428571427 & 0.7714285714285714 & -0.3714285714285714 & 1.9999999999999996  \\
+0.0 & 0.0 & 1.0 & -0.7999999999999999 & 0.0 & -0.08571428571428572 & 0.11428571428571428 & -0.028571428571428574 & 0.0 & 0.08571428571428572 & -0.11428571428571428 & 0.028571428571428574 & 0.14285714285714296  \\
+0.0 & 1.0 & 0.0 & -0.8857142857142857 & 0.0 & -0.17142857142857143 & -0.05714285714285715 & 0.08571428571428572 & 0.0 & 0.17142857142857143 & 0.05714285714285715 & -0.08571428571428572 & 0.7142857142857143  \\
+1.0 & 0.0 & 0.0 & 0.8 & 0.0 & 0.2285714285714286 & 0.028571428571428588 & -0.2571428571428572 & 0.0 & -0.2285714285714286 & -0.028571428571428588 & 0.2571428571428572 & 0.28571428571428575  \\
+\hline
+0.0 & 0.0 & 0.0 & 648.0285714285714 & 0.0 & 38.74285714285713 & -45.22857142857143 & 32.2 & 0.0 & -38.74285714285713 & 45.22857142857143 & -32.2 & -231.71428571428572  \\
+0.0 & 0.0 & 0.0 & 4.440892098500626e-16 & 0.0 & 1.1102230246251565e-16 & 1.3877787807814457e-17 & 0.0 & 1.0 & 0.9999999999999999 & 1.0 & 1.0 & 0.0  \\
+\hline
+\end{tabular}
+\end{center}
+Como los coeficientes de la función objetivo son no negativos, se llega al fin del programa.
+Note que ampliado converge y cómo las variables artificiales son cero la penalización es nula. \
+Se elimina la última fila de la tabla y las columnas de las variables artificiales
+\begin{center}
+\begin{tabular}{|cccccccc|c|}\hline
+0.0 & 0.0 & 0.0 & 12.685714285714285 & -1.0 & 0.5428571428571427 & -0.7714285714285714 & 0.3714285714285714 & 1.9999999999999996  \\
+0.0 & 0.0 & 1.0 & -0.7999999999999999 & 0.0 & -0.08571428571428572 & 0.11428571428571428 & -0.028571428571428574 & 0.14285714285714296  \\
+0.0 & 1.0 & 0.0 & -0.8857142857142857 & 0.0 & -0.17142857142857143 & -0.05714285714285715 & 0.08571428571428572 & 0.7142857142857143  \\
+1.0 & 0.0 & 0.0 & 0.8 & 0.0 & 0.2285714285714286 & 0.028571428571428588 & -0.2571428571428572 & 0.28571428571428575  \\
+\hline
+0.0 & 0.0 & 0.0 & 648.0285714285714 & 0.0 & 38.74285714285713 & -45.22857142857143 & 32.2 & -231.71428571428572  \\
+\hline
+\end{tabular}
+\end{center}
+Ahora se vuelve a realizar el método simplex con esta nueva tabla.
+Se crea la tabla simplex incial:
+\begin{center} 
+\begin{tabular}{|cccccccc|c|}\hline
+0.0 & 0.0 & 0.0 & 12.685714285714285 & -1.0 & 0.5428571428571427 & -0.7714285714285714 & 0.3714285714285714 & 1.9999999999999996  \\
+0.0 & 0.0 & 1.0 & -0.7999999999999999 & 0.0 & -0.08571428571428572 & 0.11428571428571428 & -0.028571428571428574 & 0.14285714285714296  \\
+0.0 & 1.0 & 0.0 & -0.8857142857142857 & 0.0 & -0.17142857142857143 & -0.05714285714285715 & 0.08571428571428572 & 0.7142857142857143  \\
+1.0 & 0.0 & 0.0 & 0.8 & 0.0 & 0.2285714285714286 & 0.028571428571428588 & -0.2571428571428572 & 0.28571428571428575  \\
+\hline
+0.0 & 0.0 & 0.0 & 648.0285714285714 & 0.0 & 38.74285714285713 & -45.22857142857143 & 32.2 & -231.71428571428572  \\
+\hline
+\end{tabular}
+\end{center}
+Se comienza a resolver usando el método simplex. \\ 
+\textbf{Proceso de pivoteo}
+\begin{itemize}
+\item La columna pivote es 7 dado que -45.22857142857143  es el menor coeficiente negativo de la función objetivo.
+\item La fila pivote es 2 dado que 0.14285714285714296/0.11428571428571428 es el menor cociente no negativo.
+\item Ahora se aplica el proceso de pivoteo con el elemento pivote en la posición [2, 7].
+\item El elemento pivote corresponde a 0.11428571428571428
+\end{itemize}
+Se multiplica la fila  2 por 8.75  y se convierte en 0 los demás valores de la columna pivote en 0: 
+\begin{center}
+\begin{tabular}{|cccccccc|c|}\hline
+0.0 & 0.0 & 6.749999999999999 & 7.2857142857142865 & -1.0 & -0.03571428571428581 & 0.0 & 0.17857142857142855 & 2.9642857142857144  \\
+0.0 & 0.0 & 8.75 & -6.999999999999999 & 0.0 & -0.75 & 1.0 & -0.25 & 1.2500000000000009  \\
+0.0 & 1.0 & 0.5 & -1.2857142857142856 & 0.0 & -0.2142857142857143 & 0.0 & 0.07142857142857142 & 0.7857142857142858  \\
+1.0 & 0.0 & -0.25000000000000017 & 1.0000000000000002 & 0.0 & 0.25000000000000006 & 0.0 & -0.25 & 0.25  \\
+\hline
+0.0 & 0.0 & 395.75 & 331.4285714285714 & 0.0 & 4.821428571428562 & 0.0 & 20.892857142857146 & -175.1785714285714  \\
+\hline
+\end{tabular}
+\end{center}
+Como los coeficientes de la función objetivo son no negativos, se llega al fin del programa.
+La solucion del programa lineal es:
+[0.25, 0.7857142857142858, 0, 0, 0, 0, 1.2500000000000009, 0]
+
+\end{document}
